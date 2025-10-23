@@ -23,5 +23,6 @@ jobs:
           pip install pipx && pipx ensurepath
           pipx install uv
           uv sync --dev
+          uv pip install pre-commit ruff black isort nbstripout
       - name: Run Pre commit hook (formatting, linting & tests)
-        run: source .venv/bin/activate && pre-commit run --all-files --hook-stage pre-push --show-diff-on-failure
+        run: uv run pre-commit run --all-files --hook-stage pre-push --show-diff-on-failure
