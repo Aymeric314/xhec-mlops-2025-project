@@ -18,7 +18,7 @@ repos:
         additional_dependencies: [".[jupyter]"]
       - id: isort
         name: Sorting imports (isort)
-        entry: isort
+        entry: uv run isort
         types: [python]
         language: system
       - id: ruff
