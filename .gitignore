@@ -88,3 +88,6 @@ secrets/*
 
 # CSV files
 data/
+
+# MLflow files
+notebooks/mlruns/
