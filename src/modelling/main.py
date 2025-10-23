@@ -5,11 +5,13 @@ from pathlib import Path
 
 import mlflow
 from predicting import evaluate_model, predict_rings
+from prefect import flow
 from preprocessing import extract_x_y, preprocessing, split_data
 from training import train_model
 from utils import get_data, pickle_object
 
 
+@flow(name="training_flow")
 def main(trainset_path: Path) -> None:
     """Train a model using the data at the given path and save the model (pickle)."""
 
