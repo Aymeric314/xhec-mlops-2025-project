@@ -404,21 +404,16 @@ name = "xhec-mlops-project-student"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
-    { name = "pydantic" },
-]
-
-[package.optional-dependencies]
-dev = [
     { name = "nbstripout" },
     { name = "pre-commit" },
+    { name = "pydantic" },
     { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "nbstripout", marker = "extra == 'dev'", specifier = ">=0.7.0" },
-    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.5.0" },
+    { name = "nbstripout", specifier = ">=0.7.0" },
+    { name = "pre-commit", specifier = ">=3.5.0" },
     { name = "pydantic", specifier = ">=2.0.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.5.0" },
+    { name = "ruff", specifier = ">=0.5.0" },
 ]
-provides-extras = ["dev"]
