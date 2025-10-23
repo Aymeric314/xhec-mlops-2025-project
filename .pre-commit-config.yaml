@@ -10,28 +10,25 @@ repos:
       - id: check-added-large-files
   - repo: local
     hooks:
-      - id: ruff-format
-        name: Formatting (ruff)
-        entry: uv run ruff format
-        language: system
+      - id: black
+        name: Formatting (black)
+        entry: black
+        language: python
+        types_or: [python, pyi, jupyter]
+        additional_dependencies: [".[jupyter]"]
+      - id: isort
+        name: Sorting imports (isort)
+        entry: isort
         types: [python]
-      - id: ruff-fix
+        language: system
+      - id: ruff
         name: Linting (ruff)
-        entry: uv run ruff check
-        language: system
+        entry: ruff
         types: [python]
-      - id: ruff-sort
-        name: Sorting (ruff)
-        entry: uv run ruff check --select I --fix
         language: system
-        types: [python]
       - id: nbstripout
         name: Strip Jupyter notebook output (nbstripout)
         entry: uv run nbstripout
         language: system
-        files: \\.(ipynb)$
-  - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.7.17
-    hooks:
-      - id: uv-lock
+        files: \\.(ipynb)$  
 exclude: ^(.svn|CVS|.bzr|.hg|.git|__pycache__|.tox|.ipynb_checkpoints|assets|tests/assets/|venv/|.venv/)
