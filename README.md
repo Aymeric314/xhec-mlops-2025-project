@@ -229,16 +229,16 @@ interval=10080
 **Useful Commands:**
 ```bash
 # Check Prefect server status
-prefect server status
+uv run prefect server status
 
 # List all flows
-prefect flow ls
+uv run prefect flow ls
 
 # List all deployments
-prefect deployment ls
+uv run prefect deployment ls
 
 # View flow run logs
-prefect flow-run logs <flow-run-id>
+uv run prefect flow-run logs <flow-run-id>
 ```
 
 ## 💡 Development Tips
