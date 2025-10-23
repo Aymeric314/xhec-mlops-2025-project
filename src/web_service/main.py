@@ -1,11 +1,8 @@
-# Code with FastAPI (app = FastAPI(...))
-
-
 from fastapi import FastAPI
+from lib.inference import predict_abalone
+from lib.models import AbaloneInput, AbalonePrediction
 
-# Other imports
-
-app = FastAPI(title="...", description="...")
+app = FastAPI(title="Abalone Prediction API")
 
 
 @app.get("/")
@@ -13,6 +10,9 @@ def home() -> dict:
     return {"health_check": "App up and running!"}
 
 
-@app.post("/predict", response_model="InsertHereAPydanticClass", status_code=201)
-def predict(payload: "InsertHereAPydanticClass") -> dict:
-    # TODO: complete and replace the "InsertHereAPydanticClass" with the correct Pydantic classes defined in web_service/lib/models.py
+@app.post("/predict", response_model=AbalonePrediction)
+def predict(payload: AbaloneInput):
+    """Predict the number of rings (age) of an abalone"""
+    input_data = payload.dict()
+    predicted_rings = predict_abalone(input_data)
+    return AbalonePrediction(predicted_rings=predicted_rings)
