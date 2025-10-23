@@ -5,6 +5,12 @@ import tempfile
 from pathlib import Path
 from typing import Any, Union
 
+import pandas as pd
+
+
+def get_data():
+    return pd.read_csv("../../data/abalone.csv")
+
 
 # Use this module to code a `pickle_object` function. This will be useful to pickle the model (and encoder if need be).
 def pickle_object(obj: Any, filepath: Union[str, Path]) -> None:
