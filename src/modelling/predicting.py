@@ -1,6 +1,8 @@
+from prefect import task
 from sklearn.metrics import root_mean_squared_error
 
 
+@task(name="predict_rings")
 def predict_rings(input_data, model):
     """
     Predicts the target variable using the provided model and input data.
@@ -15,6 +17,7 @@ def predict_rings(input_data, model):
     return model.predict(input_data)
 
 
+@task(name="evaluate_model")
 def evaluate_model(y_true, y_pred):
     """
     Evaluates the model's performance using the root mean squared error (RMSE).

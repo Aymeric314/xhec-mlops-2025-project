@@ -6,14 +6,17 @@ from pathlib import Path
 from typing import Any, Union
 
 import pandas as pd
+from prefect import task
 
 
+@task(name="get_data")
 def get_data(data_path: Union[str, Path] = "../../data/abalone.csv"):
     """Load data from the specified path."""
     return pd.read_csv(data_path)
 
 
 # Use this module to code a `pickle_object` function. This will be useful to pickle the model (and encoder if need be).
+@task(name="pickle_object")
 def pickle_object(obj: Any, filepath: Union[str, Path]) -> None:
     """Serialize `obj` to `filepath` using pickle and an atomic move.
 

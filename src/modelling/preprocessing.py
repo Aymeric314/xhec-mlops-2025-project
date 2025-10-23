@@ -1,10 +1,12 @@
 from typing import List
 
 import pandas as pd
+from prefect import task
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.model_selection import train_test_split
 
 
+@task(name="split_data")
 def split_data(df):
     y = df["Rings"]
     X = df.drop(columns=["Rings"])
@@ -16,6 +18,7 @@ def split_data(df):
     return X_train, X_test, y_train, y_test
 
 
+@task(name="encoding")
 def encode_sex_column(df) -> pd.DataFrame:
 
     # 1. Apply One-Hot Encoding
@@ -26,12 +29,14 @@ def encode_sex_column(df) -> pd.DataFrame:
     return df
 
 
+@task(name="preprocessing")
 def preprocessing(df):
     df = encode_sex_column(df)
     df.drop(columns=["Length"], inplace=True)
     return df
 
 
+@task(name="extract_x_y")
 def extract_x_y(
     df: pd.DataFrame,
     categorical_cols: List[str] = None,

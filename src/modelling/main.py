@@ -7,13 +7,15 @@ import mlflow
 from mlflow.models import infer_signature
 from mlflow.sklearn import log_model
 
+from prefect import flow
 from modelling.predicting import evaluate_model, predict_rings
 from modelling.preprocessing import extract_x_y, preprocessing, split_data
 from modelling.training import train_model
 from modelling.utils import get_data, pickle_object
 
 
-def main(trainset_path: Path) -> None:
+@flow(name="training_flow")
+def training_flow(trainset_path: Path) -> None:
     """Train a model using the data at the given path and save the model (pickle)."""
 
     mlflow.set_experiment("abalone_project")
@@ -78,4 +80,4 @@ if __name__ == "__main__":
     )
     parser.add_argument("trainset_path", type=str, help="Path to the training set")
     args = parser.parse_args()
-    main(args.trainset_path)
+    training_flow(args.trainset_path)
