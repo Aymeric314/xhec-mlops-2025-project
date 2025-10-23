@@ -10,21 +10,22 @@ repos:
       - id: check-added-large-files
   - repo: local
     hooks:
-      - id: ruff-format
-        name: Formatting (ruff)
-        entry: uv run ruff format
-        language: system
+      - id: black
+        name: Formatting (black)
+        entry: uv run black
+        language: python
+        types_or: [python, pyi, jupyter]
+        additional_dependencies: [".[jupyter]"]
+      - id: isort
+        name: Sorting imports (isort)
+        entry: uv run isort
         types: [python]
-      - id: ruff-fix
+        language: system
+      - id: ruff
         name: Linting (ruff)
         entry: uv run ruff check
-        language: system
         types: [python]
-      - id: ruff-sort
-        name: Sorting (ruff)
-        entry: uv run ruff check --select I --fix
         language: system
-        types: [python]
       - id: nbstripout
         name: Strip Jupyter notebook output (nbstripout)
         entry: uv run nbstripout
