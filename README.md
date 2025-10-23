@@ -17,7 +17,7 @@ Welcome to your MLOps project! In this hands-on project, you'll build a complete
 
 Traditionally, determining an abalone's age requires:
 1. Cutting the shell through the cone
-2. Staining it 
+2. Staining it
 3. Counting rings under a microscope (very time-consuming!)
 
 **Your Goal**: Use easier-to-obtain physical measurements (shell weight, diameter, etc.) to predict the age automatically.
@@ -34,15 +34,15 @@ Traditionally, determining an abalone's age requires:
 
 ### Setup Steps
 
-1. **Fork this repository** 
+1. **Fork this repository**
    - ⚠️ **Important**: Uncheck "Copy the `main` branch only" to get all project branches
-   
+
 2. **Add your team members** as admins to your forked repository
 
 3. **Set up your development environment**:
    ```bash
    # Create and activate a virtual environment
-   uv sync 
+   uv sync
    source venv/bin/activate # on Windows: venv\Scripts\activate
 
    # Install pre-commit hooks for code quality
@@ -50,11 +50,16 @@ Traditionally, determining an abalone's age requires:
     uv run pre-commit install
    ```
 
+   One-liner setup:
+   ```bash
+   uv sync --dev && uv run pre-commit install
+   ```
+
 ## 📋 What You'll Build
 
 By the end of this project, you'll have created:
 
-### 🤖 **Automated ML Pipeline** 
+### 🤖 **Automated ML Pipeline**
 - Training workflows using Prefect
 - Automatic model retraining on schedule
 - Reproducible model and data processing
@@ -67,7 +72,7 @@ By the end of this project, you'll have created:
 ### 📊 **Production-Ready Code**
 - Clean, well-documented code
 - Automated testing and formatting
-- Proper error handling 
+- Proper error handling
 
 ## 📝 How to Work on This Project
 
@@ -102,7 +107,7 @@ git push
 
 Then:
 1. 📖 Read the PR_i.md file carefully
-2. 💻 Complete all the TODOs in the code  
+2. 💻 Complete all the TODOs in the code
 3. 🔧 Test your changes
 4. 📤 Open **ONE** pull request to your main branch
 5. ✅ Merge the pull request
@@ -121,6 +126,120 @@ Pull Requests (PRs) are how you propose and review changes before merging them i
 
 ✅ **Correct** (merging to your fork):
 ![PR Right](assets/PR_right.png)
+
+## 🚀 Running the Prefect Workflows
+
+### Prerequisites
+Make sure you have installed all dependencies:
+```bash
+uv sync
+```
+
+### Running the Training Flow
+
+You can run the abalone training flow in several ways:
+
+#### 1. **Direct Flow Execution**
+```bash
+# Navigate to the modelling directory
+cd src/modelling
+
+# Run the flow directly
+python -c "from main import training_flow; training_flow('../../data/abalone.csv')"
+```
+
+#### 2. **Using Prefect CLI**
+```bash
+# Start Prefect server (in one terminal)
+prefect server start
+
+# Run the flow using Prefect CLI
+prefect flow run "training_flow" --param trainset_path="data/abalone.csv"
+```
+
+#### 3. **Create and Run Deployments**
+```bash
+# Create and serve deployment (runs daily every 24 hours)
+cd src/modelling
+uv run python deployment.py
+```
+
+### 🖥️ **Prefect UI - Monitoring and Visualization**
+
+The Prefect UI provides a powerful web interface to monitor your flows, view run history, and manage deployments.
+
+#### Starting the Prefect Server and UI
+
+1. **Start the Prefect server**:
+   ```bash
+   uv run prefect server start
+   ```
+   This will start the server on `http://localhost:4200`
+
+2. **Open the Prefect UI**:
+   - Navigate to `http://localhost:4200` in your browser
+   - You'll see the Prefect dashboard with all your flows and deployments
+
+#### Key Features in the Prefect UI
+
+- **📊 Flow Runs**: View detailed logs and metrics for each flow execution
+- **⏰ Deployments**: Manage scheduled deployments and trigger manual runs
+- **📈 Flow Run History**: Track performance over time
+- **🔍 Task Details**: Drill down into individual task execution
+- **📋 Logs**: Real-time and historical logs for debugging
+
+#### Work Pool Management
+
+To run scheduled deployments, you need a work pool agent:
+
+```bash
+# Start an agent for the default work pool
+uv run prefect agent start --pool default-agent-pool
+```
+
+### 📅 **Scheduled Retraining**
+
+The project includes a deployment that runs:
+- **Daily Retraining**: Runs every 24 hours automatically
+- **Manual Triggers**: Can be triggered on-demand through the Prefect UI
+
+### 🔧 **Configuration and Customization**
+
+You can customize the deployment schedule by modifying `src/modelling/deployment.py`:
+
+```python
+# Example: Change to run every 6 hours (360 minutes)
+interval=360
+
+# Example: Change to run every 12 hours (720 minutes)
+interval=720
+
+# Example: Change to run every week (10080 minutes)
+interval=10080
+```
+
+### 🐛 **Troubleshooting**
+
+**Common Issues:**
+
+1. **Port already in use**: If port 4200 is busy, Prefect will automatically use the next available port
+2. **Agent not picking up jobs**: Make sure the agent is running and connected to the correct work pool
+3. **Flow not found**: Ensure you're in the correct directory and have imported the flow properly
+
+**Useful Commands:**
+```bash
+# Check Prefect server status
+uv run prefect server status
+
+# List all flows
+uv run prefect flow ls
+
+# List all deployments
+uv run prefect deployment ls
+
+# View flow run logs
+uv run prefect flow-run logs <flow-run-id>
+```
 
 ## 💡 Development Tips
 
@@ -147,16 +266,16 @@ uv sync
 
 Your project will be evaluated on:
 
-### 🔍 **Code Quality** 
+### 🔍 **Code Quality**
 - Clean, readable code structure
-- Proper naming conventions  
+- Proper naming conventions
 - Good use of docstrings and type hints
 
 ### 🎨 **Code Formatting**
 - Consistent style (automated with pre-commit)
 - Professional presentation
 
-### ⚙️ **Functionality** 
+### ⚙️ **Functionality**
 - Code runs without errors
 - All requirements implemented correctly
 
@@ -176,12 +295,15 @@ Your project will be evaluated on:
 When you're done, your repository should contain:
 
 ✅ **Automated Training Pipeline**
-- [ ] Prefect workflows for model training
-- [ ] Separate modules for training and inference  
-- [ ] Reproducible model and encoder generation
+- [x] Prefect workflows for model training (flows and tasks)
+- [x] Separate modules for training and inference
+- [x] Reproducible model and encoder generation
+- [x] Named tasks for better monitoring
 
-✅ **Automated Deployment**  
-- [ ] Prefect deployment for regular retraining
+✅ **Automated Deployment**
+- [x] Prefect deployment for regular retraining (daily schedule)
+- [x] Cron-based scheduling for automated retraining
+- [x] Work pool management for scalable execution
 
 ✅ **Production API**
 - [ ] Working REST API for predictions

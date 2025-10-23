@@ -1,0 +1,38 @@
+repos:
+  - repo: "https://github.com/pre-commit/pre-commit-hooks"
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-toml
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+  - repo: local
+    hooks:
+      - id: black
+        name: Formatting (black)
+        entry: uv run black
+        language: python
+        types_or: [python, pyi, jupyter]
+        additional_dependencies: [".[jupyter]"]
+      - id: isort
+        name: Sorting imports (isort)
+        entry: uv run isort
+        types: [python]
+        language: system
+      - id: ruff
+        name: Linting (ruff)
+        entry: uv run ruff check
+        types: [python]
+        language: system
+      - id: nbstripout
+        name: Strip Jupyter notebook output (nbstripout)
+        entry: uv run nbstripout
+        language: system
+        files: \\.(ipynb)$
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.17
+    hooks:
+      - id: uv-lock
+exclude: ^(.svn|CVS|.bzr|.hg|.git|__pycache__|.tox|.ipynb_checkpoints|assets|tests/assets/|venv/|.venv/)
