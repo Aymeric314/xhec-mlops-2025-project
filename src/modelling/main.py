@@ -4,10 +4,13 @@ import argparse
 from pathlib import Path
 
 import mlflow
-from predicting import evaluate_model, predict_rings
-from preprocessing import extract_x_y, preprocessing, split_data
-from training import train_model
-from utils import get_data, pickle_object
+from mlflow.models import infer_signature
+from mlflow.sklearn import log_model
+
+from modelling.predicting import evaluate_model, predict_rings
+from modelling.preprocessing import extract_x_y, preprocessing, split_data
+from modelling.training import train_model
+from modelling.utils import get_data, pickle_object
 
 
 def main(trainset_path: Path) -> None:
@@ -17,7 +20,7 @@ def main(trainset_path: Path) -> None:
 
     # Start a run
     with mlflow.start_run() as run:
-        run_id = run.info.run_id
+        run.info.run_id
 
         # Set tags for the run
         mlflow.set_tags({"model_type": "random_forest", "framework": "sklearn"})
@@ -55,10 +58,15 @@ def main(trainset_path: Path) -> None:
         mlflow.log_metric("test_rmse", test_me)
 
         # Log your model
-        mlflow.sklearn.log_model(model, "model")
+        logged = log_model(
+            sk_model=model,
+            name="model",
+            signature=infer_signature(X_train_encoded, prediction),
+            input_example=X_train_encoded[:5],
+        )
 
         # Register your model in mlflow model registry
-        mlflow.register_model(f"runs:/{run_id}/model", "abalone_rf_model")
+        mlflow.register_model(logged.model_uri, "abalone_rf_model")
 
         # Pickle model --> The model should be saved in pkl format the `src/web_service/local_objects` folder
         pickle_object(model, "src/web_service/local_objects/model.pkl")
