@@ -22,4 +22,6 @@ dependencies = [
   "nbstripout>=0.7.0",
   "black>=25.9.0",
   "isort>=7.0.0",
+  "scikit-learn>=1.7.2",
+  "mlflow>=3.5.1",
 ]
