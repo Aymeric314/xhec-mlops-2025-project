@@ -9,7 +9,7 @@ authors = [
   { name = "Lea Tinelli", email = "lea.tinelli@hec.edu" },
   { name = "William Belaidi", email = "william.belaidi@hec.edu" },
   { name = "Paul Filisetti", email = "paul.filisetti@hec.edu" },
-  { name = "Felix Brochier", email = "felix.brocher@hec.edu" },
+  { name = "Felix Brochier", email = "felix.brochier@hec.edu" },
   { name = "Aymeric Falcon de Longevialle", email = "aymeric.falcon-de-longevialle@hec.edu" },
 ]
 description = "X-HEC MLOps Project on Abalone age prediction model"
@@ -20,4 +20,6 @@ dependencies = [
   "pre-commit>=3.5.0",
   "ruff>=0.5.0",
   "nbstripout>=0.7.0",
+  "black>=25.9.0",
+  "isort>=7.0.0",
 ]

@@ -23,12 +23,12 @@ repos:
         language: system
       - id: ruff
         name: Linting (ruff)
-        entry: ruff
+        entry: uv run ruff check
         types: [python]
         language: system
       - id: nbstripout
         name: Strip Jupyter notebook output (nbstripout)
         entry: uv run nbstripout
         language: system
-        files: \\.(ipynb)$  
+        files: \\.(ipynb)$
 exclude: ^(.svn|CVS|.bzr|.hg|.git|__pycache__|.tox|.ipynb_checkpoints|assets|tests/assets/|venv/|.venv/)
