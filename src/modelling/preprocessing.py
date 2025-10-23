@@ -1,4 +1,7 @@
+from typing import List
+
 import pandas as pd
+from sklearn.feature_extraction import DictVectorizer
 from sklearn.model_selection import train_test_split
 
 
@@ -27,3 +30,32 @@ def preprocessing(df):
     df = encode_sex_column(df)
     df.drop(columns=["Length"], inplace=True)
     return df
+
+
+def extract_x_y(
+    df: pd.DataFrame,
+    categorical_cols: List[str] = None,
+    dv: DictVectorizer = None,
+    with_target: bool = True,
+) -> tuple:
+    """Extract features and target for abalone dataset."""
+    if categorical_cols is None:
+        # Use the one-hot encoded Sex columns instead of the original Sex column
+        categorical_cols = [col for col in df.columns if col.startswith("Sex_")]
+
+    # If no categorical columns found, use all columns as features
+    if not categorical_cols:
+        categorical_cols = df.columns.tolist()
+
+    dicts = df[categorical_cols].to_dict(orient="records")
+
+    y = None
+    if dv is None:
+        dv = DictVectorizer()
+        dv.fit(dicts)
+
+    if with_target:
+        y = df["Rings"].values
+
+    x = dv.transform(dicts)
+    return x, y, dv

@@ -8,8 +8,9 @@ from typing import Any, Union
 import pandas as pd
 
 
-def get_data():
-    return pd.read_csv("../../data/abalone.csv")
+def get_data(data_path: Union[str, Path] = "../../data/abalone.csv"):
+    """Load data from the specified path."""
+    return pd.read_csv(data_path)
 
 
 # Use this module to code a `pickle_object` function. This will be useful to pickle the model (and encoder if need be).
