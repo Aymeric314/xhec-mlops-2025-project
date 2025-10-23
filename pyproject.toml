@@ -16,7 +16,11 @@ description = "X-HEC MLOps Project on Abalone age prediction model"
 requires-python = ">=3.10,<3.12"
 
 dependencies = [
+  "mlflow>=3.5.1",
+  "pandas>=2.3.3",
+  "pre-commit>=4.3.0",
   "pydantic>=2.0.0",
+  "scikit-learn>=1.7.2",
 ]
 
 [project.optional-dependencies]
@@ -25,3 +29,6 @@ dev = [
   "ruff>=0.5.0",
   "nbstripout>=0.7.0",
 ]
+
+[tool.setuptools]
+packages = []
