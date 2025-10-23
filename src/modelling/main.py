@@ -6,8 +6,8 @@ from pathlib import Path
 import mlflow
 from mlflow.models import infer_signature
 from mlflow.sklearn import log_model
-
 from prefect import flow
+
 from modelling.predicting import evaluate_model, predict_rings
 from modelling.preprocessing import extract_x_y, preprocessing, split_data
 from modelling.training import train_model
