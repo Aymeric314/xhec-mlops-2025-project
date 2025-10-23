@@ -12,7 +12,7 @@ from utils import get_data, pickle_object
 
 
 @flow(name="training_flow")
-def main(trainset_path: Path) -> None:
+def training_flow(trainset_path: Path) -> None:
     """Train a model using the data at the given path and save the model (pickle)."""
 
     mlflow.set_experiment("abalone_project")
@@ -72,4 +72,4 @@ if __name__ == "__main__":
     )
     parser.add_argument("trainset_path", type=str, help="Path to the training set")
     args = parser.parse_args()
-    main(args.trainset_path)
+    training_flow(args.trainset_path)

@@ -22,4 +22,8 @@ dependencies = [
   "nbstripout>=0.7.0",
   "black>=25.9.0",
   "isort>=7.0.0",
+  "prefect>=3.4.24",
+  "mlflow>=3.5.1",
+  "scikit-learn>=1.7.2",
+  "pandas>=2.3.3",
 ]
