@@ -109,9 +109,6 @@ This project is already configured with:
 # Create virtual environment
 uv sync
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install pre-commit hooks
-uv run pre-commit install
 ```
 
 ### 2. Start Prefect Server Locally
