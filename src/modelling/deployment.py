@@ -10,16 +10,22 @@ except ImportError:
     # Fall back to absolute imports (for when running directly)
     from main import training_flow
 
+import os
 from pathlib import Path
 
 from prefect import serve
 
+# Create absolute path that works in both environments
+data_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "abalone.csv"
+)
+
 training_flow_deployment = training_flow.to_deployment(
     name="abalone-model-retraining",
     version="1.0.0",
-    tags=["ml", "retraining", "abalone", "daily"],
-    interval=60,
-    parameters={"trainset_path": Path("data/abalone.csv")},
+    tags=["ml", "retraining", "abalone", "hourly"],
+    interval=3600,
+    parameters={"trainset_path": Path(data_path)},
 )
 
 if __name__ == "__main__":
