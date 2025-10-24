@@ -9,7 +9,6 @@ class AbaloneInput(BaseModel):
     """Input model for abalone prediction"""
 
     Sex: Literal["M", "F", "I"]
-    Length: float
     Diameter: float
     Height: float
     Whole_weight: float

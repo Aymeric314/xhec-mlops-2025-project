@@ -40,7 +40,7 @@ def training_flow(trainset_path: Path) -> None:
         # Use the same encoder for test data
         X_test_encoded, _, _ = extract_x_y(X_test_processed, dv=dv, with_target=False)
 
-        # (Optional) Pickle encoder if need be
+        # Pickle encoder for inference
         pickle_object(dv, "src/web_service/local_objects/encoder.pkl")
 
         # Train model
