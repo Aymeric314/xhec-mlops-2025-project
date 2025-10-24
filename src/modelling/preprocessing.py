@@ -18,20 +18,9 @@ def split_data(df):
     return X_train, X_test, y_train, y_test
 
 
-@task(name="encoding")
-def encode_sex_column(df) -> pd.DataFrame:
-
-    # 1. Apply One-Hot Encoding
-    df_encoded = pd.get_dummies(df["Sex"], prefix="Sex", drop_first=True, dtype=int)
-
-    # 2. Concatenate the new encoded columns back to the original DataFrame
-    df = pd.concat([df.drop("Sex", axis=1), df_encoded], axis=1)
-    return df
-
-
 @task(name="preprocessing")
 def preprocessing(df):
-    df = encode_sex_column(df)
+    # Simply drop Length column, let DictVectorizer handle categorical encoding
     df.drop(columns=["Length"], inplace=True)
     return df
 
@@ -44,15 +33,16 @@ def extract_x_y(
     with_target: bool = True,
 ) -> tuple:
     """Extract features and target for abalone dataset."""
-    if categorical_cols is None:
-        # Use the one-hot encoded Sex columns instead of the original Sex column
-        categorical_cols = [col for col in df.columns if col.startswith("Sex_")]
+    # Use ALL columns as features (both numerical and categorical)
+    # This matches the notebook approach but uses DictVectorizer
+    feature_cols = df.columns.tolist()
 
-    # If no categorical columns found, use all columns as features
-    if not categorical_cols:
-        categorical_cols = df.columns.tolist()
+    # Remove target column if present
+    if "Rings" in feature_cols:
+        feature_cols.remove("Rings")
 
-    dicts = df[categorical_cols].to_dict(orient="records")
+    # Convert ALL features to dictionary format for DictVectorizer
+    dicts = df[feature_cols].to_dict(orient="records")
 
     y = None
     if dv is None:

@@ -4,25 +4,32 @@ import argparse
 from pathlib import Path
 
 import mlflow
-from mlflow.models import infer_signature
-from mlflow.sklearn import log_model
-from prefect import flow
 
-from modelling.predicting import evaluate_model, predict_rings
-from modelling.preprocessing import extract_x_y, preprocessing, split_data
-from modelling.training import train_model
-from modelling.utils import get_data, pickle_object
+try:
+    # Try relative imports first (for when running in docker container)
+    from .predicting import evaluate_model, predict_rings
+    from .preprocessing import extract_x_y, preprocessing, split_data
+    from .training import train_model
+    from .utils import get_data, pickle_object
+except ImportError:
+    # Fall back to absolute imports (for when running directly)
+    from predicting import evaluate_model, predict_rings
+    from preprocessing import extract_x_y, preprocessing, split_data
+    from training import train_model
+    from utils import get_data, pickle_object
+
+from prefect import flow
 
 
 @flow(name="training_flow")
 def training_flow(trainset_path: Path) -> None:
-    """Train a model using the data at the given path and save the model (pickle)."""
+    """Train a model using the data at the given path and save the model and encoder(pickle)."""
 
     mlflow.set_experiment("abalone_project")
 
     # Start a run
     with mlflow.start_run() as run:
-        run.info.run_id
+        run_id = run.info.run_id
 
         # Set tags for the run
         mlflow.set_tags({"model_type": "random_forest", "framework": "sklearn"})
@@ -30,21 +37,30 @@ def training_flow(trainset_path: Path) -> None:
         # Load data
         train_df = get_data(trainset_path)
 
-        # Split data first (before preprocessing to keep target column)
-        X_train, X_test, y_train, y_test = split_data(train_df)
+        # Preprocess ALL data first to create consistent encoder
+        train_df_processed = preprocessing(train_df.copy())
 
-        # Preprocess training data
-        X_train_processed = preprocessing(X_train.copy())
-        X_test_processed = preprocessing(X_test.copy())
+        # Create encoder using ALL data to ensure consistent vocabulary
+        _, _, dv = extract_x_y(train_df_processed, with_target=True)
 
-        # Extract features and create encoder for training data
-        X_train_encoded, _, dv = extract_x_y(X_train_processed, with_target=False)
+        # Now split the preprocessed data
+        X_train, X_test, y_train, y_test = split_data(train_df_processed)
 
-        # Use the same encoder for test data
-        X_test_encoded, _, _ = extract_x_y(X_test_processed, dv=dv, with_target=False)
+        # Extract features using the pre-fitted encoder
+        X_train_encoded, _, _ = extract_x_y(X_train, dv=dv, with_target=False)
+        X_test_encoded, _, _ = extract_x_y(X_test, dv=dv, with_target=False)
 
-        # (Optional) Pickle encoder if need be
-        pickle_object(dv, "src/web_service/local_objects/encoder.pkl")
+        # Pickle encoder for inference - use absolute path that works in both environments
+        import os
+
+        encoder_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            "src",
+            "web_service",
+            "local_objects",
+            "encoder.pkl",
+        )
+        pickle_object(dv, encoder_path)
 
         # Train model
         model = train_model(X_train_encoded, y_train)
@@ -60,18 +76,20 @@ def training_flow(trainset_path: Path) -> None:
         mlflow.log_metric("test_rmse", test_me)
 
         # Log your model
-        logged = log_model(
-            sk_model=model,
-            name="model",
-            signature=infer_signature(X_train_encoded, prediction),
-            input_example=X_train_encoded[:5],
-        )
+        mlflow.sklearn.log_model(model, "model")
 
         # Register your model in mlflow model registry
-        mlflow.register_model(logged.model_uri, "abalone_rf_model")
+        mlflow.register_model(f"runs:/{run_id}/model", "abalone_rf_model")
 
         # Pickle model --> The model should be saved in pkl format the `src/web_service/local_objects` folder
-        pickle_object(model, "src/web_service/local_objects/model.pkl")
+        model_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            "src",
+            "web_service",
+            "local_objects",
+            "model.pkl",
+        )
+        pickle_object(model, model_path)
 
 
 if __name__ == "__main__":
