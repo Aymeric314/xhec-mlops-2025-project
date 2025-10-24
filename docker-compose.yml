@@ -1,0 +1,23 @@
+services:
+  mlops-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"  # FastAPI
+      - "4201:4201"  # Prefect
+      - "5000:5000"  # MLflow
+    volumes:
+      - ./data:/app/data
+      - ./mlruns:/app/mlruns
+      - ./src:/app/src
+    environment:
+      - PREFECT_API_URL=http://localhost:4201/api
+      - MLFLOW_TRACKING_URI=http://localhost:5000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

@@ -4,11 +4,21 @@ import argparse
 from pathlib import Path
 
 import mlflow
-from predicting import evaluate_model, predict_rings
+
+try:
+    # Try relative imports first (for when running as module)
+    from .predicting import evaluate_model, predict_rings
+    from .preprocessing import extract_x_y, preprocessing, split_data
+    from .training import train_model
+    from .utils import get_data, pickle_object
+except ImportError:
+    # Fall back to absolute imports (for when running directly)
+    from predicting import evaluate_model, predict_rings
+    from preprocessing import extract_x_y, preprocessing, split_data
+    from training import train_model
+    from utils import get_data, pickle_object
+
 from prefect import flow
-from preprocessing import extract_x_y, preprocessing, split_data
-from training import train_model
-from utils import get_data, pickle_object
 
 
 @flow(name="training_flow")

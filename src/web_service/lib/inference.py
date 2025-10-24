@@ -4,7 +4,7 @@ import sys
 # Add the modelling module to the path
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "modelling"))
 
-from web_service.utils import load_model_and_encoder
+from utils import load_model_and_encoder
 
 
 def predict_abalone(input_data):

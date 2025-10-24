@@ -3,9 +3,15 @@ Prefect deployment script for abalone model retraining.
 This script creates a deployment that can be served immediately.
 """
 
+try:
+    # Try relative imports first (for when running as module)
+    from .main import training_flow
+except ImportError:
+    # Fall back to absolute imports (for when running directly)
+    from main import training_flow
+
 from pathlib import Path
 
-from main import training_flow
 from prefect import serve
 
 training_flow_deployment = training_flow.to_deployment(
