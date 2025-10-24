@@ -6,7 +6,7 @@ from pathlib import Path
 import mlflow
 
 try:
-    # Try relative imports first (for when running as module)
+    # Try relative imports first (for when running in docker container)
     from .predicting import evaluate_model, predict_rings
     from .preprocessing import extract_x_y, preprocessing, split_data
     from .training import train_model
@@ -23,7 +23,7 @@ from prefect import flow
 
 @flow(name="training_flow")
 def training_flow(trainset_path: Path) -> None:
-    """Train a model using the data at the given path and save the model (pickle)."""
+    """Train a model using the data at the given path and save the model and encoder(pickle)."""
 
     mlflow.set_experiment("abalone_project")
 

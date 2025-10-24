@@ -4,8 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8001:8001"  # FastAPI
-      - "4201:4201"  # Prefect
+      - "8000:8001"  # FastAPI (host:container)
+      - "4200:4201"  # Prefect (host:container)
       - "5000:5000"  # MLflow
     volumes:
       - ./data:/app/data

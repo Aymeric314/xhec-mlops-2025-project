@@ -7,7 +7,7 @@ echo "🚀 Starting MLOps Services..."
 
 # Start Prefect server in the background
 echo "📊 Starting Prefect server on port 4201..."
-prefect server start --host 0.0.0.0 --port 4201 &
+PREFECT_API_URL=http://localhost:4200/api prefect server start --host 0.0.0.0 --port 4201 &
 
 # Start MLflow server in the background
 echo "🔬 Starting MLflow server on port 5000..."
