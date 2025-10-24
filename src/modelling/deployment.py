@@ -11,14 +11,28 @@ except ImportError:
     from main import training_flow
 
 import os
+import sys
 from pathlib import Path
 
 from prefect import serve
 
-# Create absolute path that works in both environments
-data_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "abalone.csv"
-)
+# Allow user to specify data path via command line argument or environment variable
+if len(sys.argv) > 1:
+    # User provided data path as command line argument
+    data_path = sys.argv[1]
+    # Get project root
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+    # Convert to absolute path if it's relative
+    if not os.path.isabs(data_path):
+        # All relative paths are made relative to project root
+        data_path = os.path.join(project_root, data_path)
+else:
+    # Default to the original path
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    data_path = os.path.join(project_root, "data", "abalone.csv")
+
+print(f"Using data path: {data_path}")
 
 training_flow_deployment = training_flow.to_deployment(
     name="abalone-model-retraining",
