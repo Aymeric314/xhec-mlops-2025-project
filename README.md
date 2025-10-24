@@ -44,7 +44,7 @@ docker compose up --build
 ```
 
 ### 4. Access the Services
-- **FastAPI API**: http://localhost:8000
+- **FastAPI API**: http://localhost:8000/docs
 - **Prefect UI**: http://localhost:4200
 - **MLflow UI**: http://localhost:5000
 
@@ -108,7 +108,7 @@ This project is already configured with:
 ```bash
 # Create virtual environment
 uv sync
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install pre-commit hooks
 uv run pre-commit install
@@ -117,7 +117,7 @@ uv run pre-commit install
 ### 2. Start Prefect Server Locally
 ```bash
 # Terminal 1: Start Prefect server
-prefect server start --host 0.0.0.0 --port 4201
+prefect server start --host 0.0.0.0 --port 4200
 ```
 
 ### 3. Access Prefect UI
@@ -125,78 +125,43 @@ prefect server start --host 0.0.0.0 --port 4201
 
 ### 4. Run Training Workflow Locally
 
+**In a new terminal**, make sure your virtual environment is activated and you're at the project root:
+
+```bash
+# Ensure you're at project root
+cd /path/to/xhec-mlops-2025-project
+
+# Activate virtual environment
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
 #### Data Path Options
 The training workflow accepts data paths in three formats:
 
 1. **No path specified** (uses default):
    ```bash
-   uv run python -m src.modelling.deployment
+   uv run src/modelling/deployment.py
    # Uses: data/abalone.csv (default)
    ```
 
 2. **Relative path** (relative to project root):
    ```bash
-   uv run python -m src.modelling.deployment data/abalone.csv
-   uv run python -m src.modelling.deployment data/my_dataset.csv
+   uv run src/modelling/deployment.py data/abalone.csv
+   uv run src/modelling/deployment.py data/my_dataset.csv
    ```
 
 3. **Absolute path** (full system path):
    ```bash
-   uv run python -m src.modelling.deployment /home/user/datasets/abalone.csv
-   uv run python -m src.modelling.deployment /Users/student/Downloads/data.csv
+   uv run src/modelling/deployment.py /home/user/datasets/abalone.csv
+   uv run src/modelling/deployment.py /Users/student/Downloads/data.csv
    ```
 
 **⚠️ Important**: Absolute paths will **NOT work in Docker** because the container has its own filesystem. For Docker usage, always use relative paths or place data in the `data/` folder.
 
 **💡 Recommendation**: Place your data files in the `data/` folder for easy access and consistency.
 
-#### Option A: Direct Python Execution
-```bash
-# From project root
-cd src/modelling
-uv run python main.py ../../data/abalone.csv
-```
-
-#### Option B: Using Prefect Deployment
-```bash
-# From project root
-uv run python -m src.modelling.deployment data/abalone.csv
-```
-
 ### 5. Monitor Training Progress
-- Check Prefect UI at http://localhost:4201
-- View MLflow experiments at http://localhost:5000
-
-## 🧪 Testing the Complete Pipeline
-
-### 1. Test Prediction API
-```bash
-# Test with sample data
-curl -X POST "http://localhost:8000/predict" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "Sex": "F",
-    "Diameter": 0.45,
-    "Height": 0.15,
-    "Whole_weight": 0.5,
-    "Shucked_weight": 0.25,
-    "Viscera_weight": 0.1,
-    "Shell_weight": 0.15
-  }'
-```
-
-### 2. Test Model Retraining
-```bash
-# Trigger retraining via API
-curl -X POST "http://localhost:8000/deploy?data_path=data/abalone.csv"
-
-# Check Prefect UI for deployment status
-# Check MLflow for new experiment runs
-```
-
-### 3. Verify Model Updates
-- Check `src/web_service/local_objects/` for updated `model.pkl` and `encoder.pkl`
-- Test predictions with new model
+- Check Prefect UI at http://localhost:4200
 
 ## 📊 Data Format
 
