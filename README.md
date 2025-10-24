@@ -23,16 +23,27 @@ This MLOps project builds a complete machine learning system to predict the age 
 
 ### 1. Clone and Setup
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Aymeric314/xhec-mlops-2025-project.git
 cd xhec-mlops-2025-project
 ```
 
-### 2. Start All Services
+### 2. Add Your Data (Optional)
+If you want to retrain the model with your own data:
+```bash
+# Recommended: Place your CSV file in the data folder (default path)
+cp /path/to/your/data.csv data/your_dataset.csv
+# OR place anywhere else in the project
+cp /path/to/your/data.csv datasets/my_data.csv
+```
+
+**💡 Recommendation**: Use the `data/` folder - it's the default path, so you won't need to specify the path when triggering retraining via the API.
+
+### 3. Start All Services
 ```bash
 docker compose up --build
 ```
 
-### 3. Access the Services
+### 4. Access the Services
 - **FastAPI API**: http://localhost:8000
 - **Prefect UI**: http://localhost:4200
 - **MLflow UI**: http://localhost:5000
